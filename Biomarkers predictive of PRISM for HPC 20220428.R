@@ -8,9 +8,9 @@ path.inputs <- paste0(path.base,"Inputs/")
 path.outputs.RNAseq <- paste0(path.base,"RNAseq/")
 path.outputs.proteomic <- paste0(path.base,"proteomic/")
 
-if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager")}
-BiocManager::install("qvalue")
-install.packages("GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW");
+#if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager")}
+#BiocManager::install("qvalue")
+#install.packages("GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW");
 library(GSA);library(plyr);library(dplyr);library(data.table);library(ggplot2);library(qvalue);library(gridExtra);library(sjmisc);
 
 ##load DMEA functions
