@@ -8,6 +8,9 @@ path.inputs <- paste0(path.base,"Inputs/")
 path.outputs.RNAseq <- paste0(path.base,"RNAseq/")
 path.outputs.proteomic <- paste0(path.base,"proteomic/")
 
+dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE) #creates personal library
+.libPaths(Sys.getenv("R_LIBS_USER")) #add to the path
+
 if (!require(devtools)){install.packages(dev.tools)}
 devtools::install_github('BelindaBGarana/DMEA')
 install.packages(c("GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW"));
