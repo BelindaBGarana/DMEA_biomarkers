@@ -13,7 +13,7 @@ dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE) #creates personal librar
 
 if (!require(devtools)){install.packages(dev.tools)}
 devtools::install_github('BelindaBGarana/DMEA')
-install.packages(c("GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW"));
+install.packages(c("GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW"), repos = "http://cran.us.r-project.org");
 library(DMEA);
 library(GSA);library(plyr);library(dplyr);library(data.table);library(ggplot2);
 
@@ -35,7 +35,7 @@ gmt <- GSA.read.gmt(file="MOA_gmt_file_n6 wo special chars.gmt")
 moa <- gmt$geneset.names
 
 #import RNAseq data
-if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager")}
+if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager", repos = "http://cran.us.r-project.org")}
 
 # The following initializes usage of Bioc devel
 BiocManager::install(version='devel')
