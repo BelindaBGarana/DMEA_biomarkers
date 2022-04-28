@@ -11,12 +11,12 @@ path.outputs.proteomic <- paste0(path.base,"proteomic/")
 dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE) #creates personal library
 .libPaths(Sys.getenv("R_LIBS_USER")) #add to the path
 
-if (!require(devtools)){install.packages(dev.tools)}
-devtools::install_github('BelindaBGarana/DMEA')
-remove.packages("rlang")
-remove.packages("plyr")
-remove.packages("dplyr")
-install.packages(c("rlang","GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW"), repos = "http://cran.us.r-project.org");
+#if (!require(devtools)){install.packages(dev.tools)}
+#devtools::install_github('BelindaBGarana/DMEA')
+#remove.packages("rlang")
+#remove.packages("plyr")
+#remove.packages("dplyr")
+#install.packages(c("rlang","GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW"), repos = "http://cran.us.r-project.org");
 library(DMEA);
 library(GSA);library(plyr);library(dplyr);library(data.table);library(ggplot2);
 
@@ -41,7 +41,7 @@ moa <- gmt$geneset.names
 if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager", repos = "http://cran.us.r-project.org")}
 
 # The following initializes usage of Bioc devel
-BiocManager::install(version='devel')
+BiocManager::install(version='3.14') #using '3.14' instead of 'devel' because USC HPC doesn't have R v4.2
 BiocManager::install("depmap")
 library("plyr");library("dplyr");library("ggplot2");library("viridis");
 library("tibble");library("gridExtra");library("stringr");library("depmap");library("ExperimentHub");
