@@ -13,8 +13,8 @@ dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE) #creates personal librar
 
 if (!require(devtools)){install.packages(dev.tools)}
 devtools::install_github('BelindaBGarana/DMEA')
-remove.packages("rlang")
-remove.packages("plyr")
+#remove.packages("rlang")
+#remove.packages("plyr")
 #remove.packages("dplyr")
 install.packages(c("rlang","GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW"), repos = "http://cran.us.r-project.org");
 library(DMEA);
