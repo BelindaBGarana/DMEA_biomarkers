@@ -1,5 +1,5 @@
 #which genes are associated with sensitivity to each drug mechanism-of-action?
-#BG 20211207; last edit: BG 20220427
+#BG 20211207; last edit: BG 20220428
 
 rm(list=ls(all=TRUE))
 
@@ -10,7 +10,7 @@ path.outputs.proteomic <- paste0(path.base,"proteomic/")
 
 if (!require(devtools)){install.packages(dev.tools)}
 devtools::install_github('BelindaBGarana/DMEA')
-install.packages("GSA","plyr","dplyr","data.table","ggplot2");
+install.packages(c("GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW"));
 library(DMEA);
 library(GSA);library(plyr);library(dplyr);library(data.table);library(ggplot2);
 
@@ -84,7 +84,7 @@ train5 <- unique(c(group1, group2, group3, group4)) #leaves out group5
 
 #load function for correlations
 DMEA.biomarkers <- function(overlap.CCLE, biomarker.data, biomarker.type="RNAseq", moa, all.DMEA, training.samples, exp){
-  print(paste0("Running correlations for experiment ", exp))
+  print(paste0("Running correlations for experiment ",exp," using ",biomarker.type," data"))
   biomarker.corr.list <- list()
   corr.input.list <- list()
   for(i in 1:length(moa)){
@@ -242,6 +242,7 @@ for(k in 1:length(biomarker.types)){
     for(j in 1:length(n.genes)){
       for(m in 1:length(corr.types)){
         for(l in 1:length(types.genes)){
+          print(paste0("Running DMEA for ",n.genes[j]," using the ",types.genes[l]," ",corr.types[m]," correlated genes"))
           setwd(paste0(paths.outputs[k],n.genes[j],"_genes/",corr.types[m],"/",types.genes[l],"/"))
           DMEA.biomarker.validation(all.biomarker.corr=all.biomarker.corr, biomarker.type=biomarker.types[k], n.genes=n.genes[j], type.genes=type.genes[l], expr.data=biomarker.df[[k]],expr.type=biomarker.types[k],moa=moa,overlap.CCLE=overlap.CCLE,type=corr.types[m],training.samples=training.samples[i],exp=i)
         }
