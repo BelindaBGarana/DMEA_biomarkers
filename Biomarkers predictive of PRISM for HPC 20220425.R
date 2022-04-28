@@ -11,12 +11,12 @@ path.outputs.proteomic <- paste0(path.base,"proteomic/")
 dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE) #creates personal library
 .libPaths(Sys.getenv("R_LIBS_USER")) #add to the path
 
-#if (!require(devtools)){install.packages(dev.tools)}
-#devtools::install_github('BelindaBGarana/DMEA')
-#remove.packages("rlang")
-#remove.packages("plyr")
-#remove.packages("dplyr")
-#install.packages(c("rlang","GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW"), repos = "http://cran.us.r-project.org");
+if (!require(devtools)){install.packages(dev.tools)}
+devtools::install_github('BelindaBGarana/DMEA')
+remove.packages("rlang")
+remove.packages("plyr")
+remove.packages("dplyr")
+install.packages(c("rlang","GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW"), repos = "http://cran.us.r-project.org");
 library(DMEA);
 library(GSA);library(plyr);library(dplyr);library(data.table);library(ggplot2);
 
