@@ -54,27 +54,28 @@ drug.moa <- na.omit(distinct(drug.info[,c("Drug","moa")]))
 gmt <- GSA.read.gmt(file="MOA_gmt_file_n6 wo special chars.gmt")
 moa <- gmt$geneset.names
 
+#get info for adherent cancer cell lines
+info <- read.csv(file="CCLE_sample_info.csv",header=T)
+prism.info <- info[info$CCLE_Name %in% PRISM.AUC$CCLE_ID,] #480
+info.adherent <- prism.info[prism.info$culture_type=="Adherent",] #320
+overlap.CCLE <- info.adherent$CCLE_Name[info.adherent$CCLE_Name %in% RNA.df$CCLE_ID] #320 overlapping adherent cancer cell lines
+
 #import RNAseq data
 RNA.data <- depmap_TPM()
-RNA.data <- RNA.data[RNA.data$cell_line %in% overlap, ]
 RNA.df <- as.data.frame(RNA.data)
+RNA.df <- RNA.df[RNA.df$cell_line %in% overlap.CCLE, ]
 RNA.df <- reshape2::dcast(RNA.df, cell_line ~ gene_name, value.var="rna_expression")
 colnames(RNA.df)[1] <- "CCLE_ID"
 
 #import proteomic data
 prot.data <- depmap_proteomic()
 prot.df <- as.data.frame(prot.data)
+prot.df <- prot.df[prot.df$cell_line %in% overlap.CCLE, ]
 prot.df <- ddply(prot.df, .(cell_line, gene_name), summarize, 
                  avg_expr = mean(protein_expression, na.rm=TRUE),
                  N_unique_id = length(unique(protein_id)))
 prot.df <- reshape2::dcast(prot.df, cell_line ~ gene_name, value.var="avg_expr") #12,197 gene names
 colnames(prot.df)[1] <- "CCLE_ID"
-
-#get info for adherent cancer cell lines
-info <- read.csv(file="CCLE_sample_info.csv",header=T)
-prism.info <- info[info$CCLE_Name %in% PRISM.AUC$CCLE_ID,] #480
-info.adherent <- prism.info[prism.info$culture_type=="Adherent",] #320
-overlap.CCLE <- info.adherent$CCLE_Name[info.adherent$CCLE_Name %in% RNA.df$CCLE_ID] #320 overlapping adherent cancer cell lines
 
 #import DMEA results across all moa
 all.DMEA <- read.csv(file="PRISM_DMEA_AUC_per_cell_line.csv",header=T)
