@@ -13,12 +13,25 @@ dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE) #creates personal librar
 
 if (!require(devtools)){install.packages(dev.tools)}
 devtools::install_github('BelindaBGarana/DMEA')
-#if(require(rlang)){remove.packages("rlang")}
-#if(require(plyr)){remove.packages("plyr")}
-#if(require(dplyr)){remove.packages("dplyr")}
-install.packages(c("rlang","GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW","viridis","tibble","stringr"), repos = "http://cran.us.r-project.org");
+rlang.available <- require(rlang)
+if(rlang.available){remove.packages("rlang")}
+plyr.available <- require(plyr)
+if(plyr.available){remove.packages("plyr")}
+dplyr.available <- require(dplyr)
+if(dplyr.available){remove.packages("dplyr")}
+install.packages(c("GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW","viridis","tibble","stringr"), repos = "http://cran.us.r-project.org");
 library(DMEA);
-library(GSA);library(rlang);library(plyr);library(dplyr);library(data.table);library(ggplot2);
+library(GSA);library(plyr);library(dplyr);library(data.table);library(ggplot2);
+
+if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager", repos = "http://cran.us.r-project.org")}
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='3.14') #using '3.14' instead of 'devel' because USC HPC doesn't have R v4.2
+BiocManager::install("depmap")
+#library("plyr");library("dplyr");library("ggplot2");
+library("viridis");library("tibble");library("gridExtra");library("stringr");library("depmap");library("ExperimentHub");
+eh <- ExperimentHub()
+query(eh, "depamp")
 
 ##Step 0: Import datasets and reduce for common gene names and adherent cancer cell lines
 setwd(path.inputs)
@@ -38,28 +51,18 @@ gmt <- GSA.read.gmt(file="MOA_gmt_file_n6 wo special chars.gmt")
 moa <- gmt$geneset.names
 
 #import RNAseq data
-if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager", repos = "http://cran.us.r-project.org")}
-
-# The following initializes usage of Bioc devel
-BiocManager::install(version='3.14') #using '3.14' instead of 'devel' because USC HPC doesn't have R v4.2
-BiocManager::install("depmap")
-library("plyr");library("dplyr");library("ggplot2");library("viridis");
-library("tibble");library("gridExtra");library("stringr");library("depmap");library("ExperimentHub");
-eh <- ExperimentHub()
-query(eh, "depamp")
-
 RNA.data <- depmap_TPM()
 RNA.data <- RNA.data[RNA.data$cell_line %in% overlap, ]
 RNA.df <- as.data.frame(RNA.data)
 RNA.df <- reshape2::dcast(RNA.df, cell_line ~ gene_name, value.var="rna_expression")
 
+#import proteomic data
 prot.data <- depmap_proteomic()
 prot.df <- as.data.frame(prot.data)
 prot.df <- ddply(prot.df, .(cell_line, gene_name), summarize, 
                  avg_expr = mean(protein_expression, na.rm=TRUE),
                  N_unique_id = length(unique(protein_id)))
 prot.df <- reshape2::dcast(prot.df, cell_line ~ gene_name, value.var="avg_expr") #12,197 gene names
-#prot.df.3 <- reshape2::dcast(prot.df[prot.df$N_unique_id>3,], cell_line ~ gene_name, value.var="avg_expr") #just 11 gene names, one of which is NA
 
 #get info for adherent cancer cell lines
 info <- read.csv(file="CCLE_sample_info.csv",header=T)
@@ -71,8 +74,7 @@ overlap.CCLE <- info.adherent$CCLE_Name[info.adherent$CCLE_Name %in% RNA.data$CC
 all.DMEA <- read.csv(file="PRISM_DMEA_AUC_per_cell_line.csv",header=T)
 all.DMEA$X <- NULL
 
-##run correlations for each moa: DMEA NES vs. RNAseq
-#split up samples
+#split up samples into groups for cross-validation
 samples.grouped <- read.csv(file="Adherent_cancer_cell_lines_PRISM_CCLE_RNAseq_5groups.csv",header=T)
 
 group1 <- samples.grouped[samples.grouped$group==1,]$CCLE_ID
