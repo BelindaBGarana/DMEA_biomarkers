@@ -1,5 +1,5 @@
 #which genes are associated with sensitivity to each drug mechanism-of-action?
-#BG 20211207; last edit: BG 20220428
+#BG 20211207; last edit: BG 20220429
 
 rm(list=ls(all=TRUE))
 
@@ -8,30 +8,30 @@ path.inputs <- paste0(path.base,"Inputs/")
 path.outputs.RNAseq <- paste0(path.base,"RNAseq/")
 path.outputs.proteomic <- paste0(path.base,"proteomic/")
 
-dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE) #creates personal library
+#dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE) #creates personal library
 .libPaths(Sys.getenv("R_LIBS_USER")) #add to the path
 
 #if (!require(devtools)){install.packages(dev.tools)}
 #devtools::install_github('BelindaBGarana/DMEA')
 #rlang.available <- require(rlang)
 #if(rlang.available){remove.packages("rlang")}
-install.packages("rlang", repos = "http://cran.us.r-project.org")
+#install.packages("rlang", repos = "http://cran.us.r-project.org")
 #plyr.available <- require(plyr)
 #if(plyr.available){remove.packages("plyr")}
 #dplyr.available <- require(dplyr)
 #if(dplyr.available){remove.packages("dplyr")}
-install.packages(c("GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW","viridis","tibble","stringr"), repos = "http://cran.us.r-project.org");
+#install.packages(c("GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW","viridis","tibble","stringr"), repos = "http://cran.us.r-project.org");
 library(DMEA);
 library(GSA);library(plyr);library(dplyr);library(data.table);library(ggplot2);
 
-if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager", repos = "http://cran.us.r-project.org")}
+#if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager", repos = "http://cran.us.r-project.org")}
 
 # The following initializes usage of Bioc devel
-rlang.available <- require(rlang)
-if(rlang.available){remove.packages("rlang")}
-install.packages("rlang", repos = "http://cran.us.r-project.org")
-BiocManager::install(version='3.14') #using '3.14' instead of 'devel' because USC HPC doesn't have R v4.2
-BiocManager::install("depmap")
+# rlang.available <- require(rlang)
+# if(rlang.available){remove.packages("rlang")}
+# install.packages("rlang", repos = "http://cran.us.r-project.org")
+# BiocManager::install(version='3.14') #using '3.14' instead of 'devel' because USC HPC doesn't have R v4.2
+# BiocManager::install("depmap")
 #library("plyr");library("dplyr");library("ggplot2");
 library("viridis");library("tibble");library("gridExtra");library("stringr");library("depmap");library("ExperimentHub");
 eh <- ExperimentHub()
@@ -59,6 +59,7 @@ RNA.data <- depmap_TPM()
 RNA.data <- RNA.data[RNA.data$cell_line %in% overlap, ]
 RNA.df <- as.data.frame(RNA.data)
 RNA.df <- reshape2::dcast(RNA.df, cell_line ~ gene_name, value.var="rna_expression")
+colnames(RNA.df)[1] <- "CCLE_ID"
 
 #import proteomic data
 prot.data <- depmap_proteomic()
@@ -67,12 +68,13 @@ prot.df <- ddply(prot.df, .(cell_line, gene_name), summarize,
                  avg_expr = mean(protein_expression, na.rm=TRUE),
                  N_unique_id = length(unique(protein_id)))
 prot.df <- reshape2::dcast(prot.df, cell_line ~ gene_name, value.var="avg_expr") #12,197 gene names
+colnames(prot.df)[1] <- "CCLE_ID"
 
 #get info for adherent cancer cell lines
 info <- read.csv(file="CCLE_sample_info.csv",header=T)
 prism.info <- info[info$CCLE_Name %in% PRISM.AUC$CCLE_ID,] #480
 info.adherent <- prism.info[prism.info$culture_type=="Adherent",] #320
-overlap.CCLE <- info.adherent$CCLE_Name[info.adherent$CCLE_Name %in% RNA.data$CCLE_ID] #320 overlapping adherent cancer cell lines
+overlap.CCLE <- info.adherent$CCLE_Name[info.adherent$CCLE_Name %in% RNA.df$CCLE_ID] #320 overlapping adherent cancer cell lines
 
 #import DMEA results across all moa
 all.DMEA <- read.csv(file="PRISM_DMEA_AUC_per_cell_line.csv",header=T)
