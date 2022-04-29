@@ -11,15 +11,15 @@ path.outputs.proteomic <- paste0(path.base,"proteomic/")
 dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE) #creates personal library
 .libPaths(Sys.getenv("R_LIBS_USER")) #add to the path
 
-if (!require(devtools)){install.packages(dev.tools)}
-devtools::install_github('BelindaBGarana/DMEA')
-rlang.available <- require(rlang)
-if(rlang.available){remove.packages("rlang")}
+#if (!require(devtools)){install.packages(dev.tools)}
+#devtools::install_github('BelindaBGarana/DMEA')
+#rlang.available <- require(rlang)
+#if(rlang.available){remove.packages("rlang")}
 install.packages("rlang", repos = "http://cran.us.r-project.org")
-plyr.available <- require(plyr)
-if(plyr.available){remove.packages("plyr")}
-dplyr.available <- require(dplyr)
-if(dplyr.available){remove.packages("dplyr")}
+#plyr.available <- require(plyr)
+#if(plyr.available){remove.packages("plyr")}
+#dplyr.available <- require(dplyr)
+#if(dplyr.available){remove.packages("dplyr")}
 install.packages(c("GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW","viridis","tibble","stringr"), repos = "http://cran.us.r-project.org");
 library(DMEA);
 library(GSA);library(plyr);library(dplyr);library(data.table);library(ggplot2);
@@ -35,7 +35,7 @@ BiocManager::install("depmap")
 #library("plyr");library("dplyr");library("ggplot2");
 library("viridis");library("tibble");library("gridExtra");library("stringr");library("depmap");library("ExperimentHub");
 eh <- ExperimentHub()
-query(eh, "depamp")
+query(eh, "depmap")
 
 ##Step 0: Import datasets and reduce for common gene names and adherent cancer cell lines
 setwd(path.inputs)
