@@ -16,7 +16,7 @@ devtools::install_github('BelindaBGarana/DMEA')
 if(require(rlang)){remove.packages("rlang")}
 if(require(plyr)){remove.packages("plyr")}
 if(require(dplyr)){remove.packages("dplyr")}
-install.packages(c("rlang","GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW"), repos = "http://cran.us.r-project.org");
+install.packages(c("rlang","GSA","plyr","dplyr","data.table","ggplot2","gridExtra","sjmisc","parallel","snow","doSNOW","viridis","tibble","stringr"), repos = "http://cran.us.r-project.org");
 library(DMEA);
 library(GSA);library(rlang);library(plyr);library(dplyr);library(data.table);library(ggplot2);
 
