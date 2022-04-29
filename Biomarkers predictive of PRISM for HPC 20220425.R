@@ -15,6 +15,7 @@ if (!require(devtools)){install.packages(dev.tools)}
 devtools::install_github('BelindaBGarana/DMEA')
 rlang.available <- require(rlang)
 if(rlang.available){remove.packages("rlang")}
+install.packages("rlang", repos = "http://cran.us.r-project.org")
 plyr.available <- require(plyr)
 if(plyr.available){remove.packages("plyr")}
 dplyr.available <- require(dplyr)
@@ -26,6 +27,9 @@ library(GSA);library(plyr);library(dplyr);library(data.table);library(ggplot2);
 if (!require("BiocManager", quietly = TRUE)){install.packages("BiocManager", repos = "http://cran.us.r-project.org")}
 
 # The following initializes usage of Bioc devel
+rlang.available <- require(rlang)
+if(rlang.available){remove.packages("rlang")}
+install.packages("rlang", repos = "http://cran.us.r-project.org")
 BiocManager::install(version='3.14') #using '3.14' instead of 'devel' because USC HPC doesn't have R v4.2
 BiocManager::install("depmap")
 #library("plyr");library("dplyr");library("ggplot2");
