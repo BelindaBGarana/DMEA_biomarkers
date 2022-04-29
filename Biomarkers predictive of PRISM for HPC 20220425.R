@@ -55,10 +55,8 @@ gmt <- GSA.read.gmt(file="MOA_gmt_file_n6 wo special chars.gmt")
 moa <- gmt$geneset.names
 
 #get info for adherent cancer cell lines
-info <- read.csv(file="CCLE_sample_info.csv",header=T)
-prism.info <- info[info$CCLE_Name %in% PRISM.AUC$CCLE_ID,] #480
-info.adherent <- prism.info[prism.info$culture_type=="Adherent",] #320
-overlap.CCLE <- info.adherent$CCLE_Name[info.adherent$CCLE_Name %in% RNA.df$CCLE_ID] #320 overlapping adherent cancer cell lines
+samples.grouped <- read.csv(file="Adherent_cancer_cell_lines_PRISM_CCLE_RNAseq_5groups.csv",header=T)
+overlap.CCLE <- samples.grouped$CCLE_ID
 
 #import RNAseq data
 RNA.data <- depmap_TPM()
@@ -82,8 +80,6 @@ all.DMEA <- read.csv(file="PRISM_DMEA_AUC_per_cell_line.csv",header=T)
 all.DMEA$X <- NULL
 
 #split up samples into groups for cross-validation
-samples.grouped <- read.csv(file="Adherent_cancer_cell_lines_PRISM_CCLE_RNAseq_5groups.csv",header=T)
-
 group1 <- samples.grouped[samples.grouped$group==1,]$CCLE_ID
 group2 <- samples.grouped[samples.grouped$group==2,]$CCLE_ID
 group3 <- samples.grouped[samples.grouped$group==3,]$CCLE_ID
